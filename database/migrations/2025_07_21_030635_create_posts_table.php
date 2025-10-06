@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('body');
             $table->string('photo')->nullable()->default(null);
-            
+
             // Tambahan kolom status (draft/published)
             $table->enum('status', ['draft', 'published'])->default('published');
 

@@ -2,13 +2,15 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use App\Models\Post;
+use Livewire\Component;
 
 class LikeButton extends Component
 {
     public Post $post;
+
     public bool $liked = false;
+
     public int $likesCount = 0;
 
     public function mount(Post $post)
@@ -23,7 +25,7 @@ class LikeButton extends Component
 
     public function toggleLike()
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return; // user belum login
         }
 

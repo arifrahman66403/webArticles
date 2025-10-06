@@ -2,16 +2,19 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use App\Models\Post;
 use App\Models\Comment;
+use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class PostComments extends Component
 {
     public Post $post;
+
     public $body = '';
+
     public $parentId = null;
+
     public $replyTo = null;
 
     protected $listeners = ['set-reply' => 'setReply'];
@@ -19,7 +22,7 @@ class PostComments extends Component
     public function setReply($data)
     {
         $this->parentId = $data['parentId'];
-        $this->replyTo  = $data['replyTo'];
+        $this->replyTo = $data['replyTo'];
     }
 
     protected $rules = [
@@ -43,11 +46,11 @@ class PostComments extends Component
         }
 
         Comment::create([
-            'post_id'   => $this->post->id,
-            'user_id'   => Auth::id(),
+            'post_id' => $this->post->id,
+            'user_id' => Auth::id(),
             'parent_id' => $parentId,
-            'reply_to'  => $this->replyTo,
-            'body'      => $this->body,
+            'reply_to' => $this->replyTo,
+            'body' => $this->body,
         ]);
 
         $this->reset(['body', 'parentId', 'replyTo']);

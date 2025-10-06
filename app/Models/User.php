@@ -4,8 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
@@ -38,8 +38,8 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $casts  = [
-        'email_verified_at' => 'datetime'
+    protected $casts = [
+        'email_verified_at' => 'datetime',
     ];
 
     /**
@@ -114,7 +114,7 @@ class User extends Authenticatable
     public function getProfilePhotoUrlAttribute()
     {
         if ($this->profile_photo) {
-            return asset('storage/' . $this->profile_photo);
+            return asset('storage/'.$this->profile_photo);
         }
         // List warna background (Tailwind palette misalnya)
         $colors = [
@@ -128,10 +128,10 @@ class User extends Authenticatable
             'EA580C', // Orange
         ];
         // Ambil warna berdasarkan hash user_id supaya konsisten
-        $colorIndex = crc32($this->id . $this->name) % count($colors);
+        $colorIndex = crc32($this->id.$this->name) % count($colors);
         $bgColor = $colors[$colorIndex];
 
-        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name)
-            . "&background={$bgColor}&color=fff&bold=true";
+        return 'https://ui-avatars.com/api/?name='.urlencode($this->name)
+            ."&background={$bgColor}&color=fff&bold=true";
     }
 }

@@ -2,18 +2,11 @@
 
 namespace App\Models;
 
-use App\Models\User;
-use App\Models\Like;
-use App\Models\CommentPost;
-use App\Models\Category;
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
+use Illuminate\Support\Str;
 
 class Post extends Model
 {
@@ -37,7 +30,7 @@ class Post extends Model
     {
         static::addGlobalScope('authorOnly', function (Builder $builder) {
             $builder->whereHas('author', function ($q) {
-            $q->whereIn('role', ['superadmin', 'admin', 'author']); // admin dan author yang bisa menampilkan post
+                $q->whereIn('role', ['superadmin', 'admin', 'author']); // admin dan author yang bisa menampilkan post
             });
         });
     }
@@ -45,20 +38,20 @@ class Post extends Model
     public function scopeFilter($query, array $filters)
     {
         if ($filters['search'] ?? false) {
-            $query->where(function($q) use ($filters) {
-                $q->where('title', 'like', '%' . $filters['search'] . '%')
-                ->orWhere('body', 'like', '%' . $filters['search'] . '%');
+            $query->where(function ($q) use ($filters) {
+                $q->where('title', 'like', '%'.$filters['search'].'%')
+                    ->orWhere('body', 'like', '%'.$filters['search'].'%');
             });
         }
 
         if ($filters['category'] ?? false) {
-            $query->whereHas('category', function($q) use ($filters) {
+            $query->whereHas('category', function ($q) use ($filters) {
                 $q->where('slug', $filters['category']);
             });
         }
 
         if ($filters['author'] ?? false) {
-            $query->whereHas('author', function($q) use ($filters) {
+            $query->whereHas('author', function ($q) use ($filters) {
                 $q->where('username', $filters['author']);
             });
         }
@@ -86,7 +79,7 @@ class Post extends Model
         return $this->comments()
             ->withCount('replies')
             ->get()
-            ->sum(fn($c) => 1 + $c->replies_count);
+            ->sum(fn ($c) => 1 + $c->replies_count);
     }
 
     public function getPhotoUrlAttribute()
@@ -95,7 +88,7 @@ class Post extends Model
             // Kalau sudah ada photo (URL / storage)
             return Str::startsWith($this->photo, ['http://', 'https://'])
                 ? $this->photo
-                : asset('storage/' . $this->photo);
+                : asset('storage/'.$this->photo);
         }
 
         // Kalau null → generate dummy picsum

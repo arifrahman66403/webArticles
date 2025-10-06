@@ -1,33 +1,29 @@
 <?php
 
-use App\Models\Post;
-use App\Models\User;
-use App\Models\Category;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PostController;
+use App\Http\Controllers\Admin\AdminPostController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\LikeController;
-use App\Http\Controllers\RouteController;
-use App\Http\Controllers\MessageController;
+use App\Http\Controllers\Author\AuthorPostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LibraryController;
-use App\Http\Controllers\Admin\SettingController;
-use App\Http\Controllers\Admin\AdminPostController;
-use App\Http\Controllers\Author\AuthorPostController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\RouteController;
 use App\Http\Controllers\User\UserSettingController;
+use App\Models\User;
+use Illuminate\Support\Facades\Route;
 
 // ---------------------------
 // LOGIN, REGISTER AND LOGOUT
 // ---------------------------
 Route::middleware(['guest'])
-->group(function () {
-    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
-    Route::post('/register', [AuthController::class, 'register']);
-});
+    ->group(function () {
+        Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+        Route::post('/login', [AuthController::class, 'login']);
+        Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
+        Route::post('/register', [AuthController::class, 'register']);
+    });
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 // ---------------------------
@@ -50,7 +46,6 @@ Route::delete('/comments/{comment}', [CommentController::class, 'delete'])->name
 Route::post('/posts/{post}/like', [LikeController::class, 'like'])->name('posts.like');
 Route::delete('/posts/{post}/unlike', [LikeController::class, 'unlike'])->name('posts.unlike');
 
-
 // ---------------------------
 // MESSAGE FOR ADMIN
 // ---------------------------
@@ -66,64 +61,63 @@ Route::middleware(['auth', 'role:superadmin,admin'])->name('message.')->group(fu
 // CRUD FOR ADMIN
 // ---------------------------
 Route::prefix('admin')
-->middleware(['auth', 'role:superadmin,admin'])->name('admin.posts.')
-->group(function () {
-    Route::get('/posts', [AdminPostController::class, 'adminIndex'])->name('index');
-    Route::get('/posts/create', [AdminPostController::class, 'create'])->name('create');
-    Route::post('/posts', [AdminPostController::class, 'store'])->name('store');
-    Route::get('/posts/{post}', [AdminPostController::class, 'adminShow'])->name('show');
-    Route::get('/posts/{post}/edit', [AdminPostController::class, 'edit'])->name('edit');
-    Route::put('/posts/{post}', [AdminPostController::class, 'update'])->name('update');
-    Route::delete('/posts/{post}', [AdminPostController::class, 'destroy'])->name('destroy');
-});
+    ->middleware(['auth', 'role:superadmin,admin'])->name('admin.posts.')
+    ->group(function () {
+        Route::get('/posts', [AdminPostController::class, 'adminIndex'])->name('index');
+        Route::get('/posts/create', [AdminPostController::class, 'create'])->name('create');
+        Route::post('/posts', [AdminPostController::class, 'store'])->name('store');
+        Route::get('/posts/{post}', [AdminPostController::class, 'adminShow'])->name('show');
+        Route::get('/posts/{post}/edit', [AdminPostController::class, 'edit'])->name('edit');
+        Route::put('/posts/{post}', [AdminPostController::class, 'update'])->name('update');
+        Route::delete('/posts/{post}', [AdminPostController::class, 'destroy'])->name('destroy');
+    });
 
 // ---------------------------
 // CRUD FOR AUTHOR
 // ---------------------------
 Route::prefix('author')
-->middleware(['auth', 'role:author'])->name('author.posts.')
-->group(function () {
-    Route::get('/posts', [AuthorPostController::class, 'index'])->name('index');
-    Route::get('/posts/create', [AuthorPostController::class, 'create'])->name('create');
-    Route::post('/posts', [AuthorPostController::class, 'store'])->name('store');
-    Route::get('/posts/{post:slug}', [AuthorPostController::class, 'show'])->name('show');
-    Route::get('/posts/{post:slug}/edit', [AuthorPostController::class, 'edit'])->name('edit');
-    Route::put('/posts/{post:slug}', [AuthorPostController::class, 'update'])->name('update');
-    Route::delete('/posts/{post:slug}', [AuthorPostController::class, 'destroy'])->name('destroy');
-});
+    ->middleware(['auth', 'role:author'])->name('author.posts.')
+    ->group(function () {
+        Route::get('/posts', [AuthorPostController::class, 'index'])->name('index');
+        Route::get('/posts/create', [AuthorPostController::class, 'create'])->name('create');
+        Route::post('/posts', [AuthorPostController::class, 'store'])->name('store');
+        Route::get('/posts/{post:slug}', [AuthorPostController::class, 'show'])->name('show');
+        Route::get('/posts/{post:slug}/edit', [AuthorPostController::class, 'edit'])->name('edit');
+        Route::put('/posts/{post:slug}', [AuthorPostController::class, 'update'])->name('update');
+        Route::delete('/posts/{post:slug}', [AuthorPostController::class, 'destroy'])->name('destroy');
+    });
 
 // ---------------------------
 // SETTING FOR ADMIN
 // ---------------------------
 Route::prefix('admin/setting')
-->middleware(['auth', 'role:superadmin,admin'])->name('admin.setting.')
-->group(function () {
+    ->middleware(['auth', 'role:superadmin,admin'])->name('admin.setting.')
+    ->group(function () {
 
-    // Profile
-    Route::get('/profile', [SettingController::class, 'profileIndex'])->name('profile.index');
-    Route::post('/profile', [SettingController::class, 'updateProfile'])->name('profile.update');
-    Route::put('/profile/photo', [SettingController::class, 'updateProfilePhoto'])->name('photo.update');
-    Route::delete('/profile/photo', [SettingController::class, 'deleteProfilePhoto'])->name('photo.delete');
-    Route::post('/password', [SettingController::class, 'updatePassword'])->name('password.update');
+        // Profile
+        Route::get('/profile', [SettingController::class, 'profileIndex'])->name('profile.index');
+        Route::post('/profile', [SettingController::class, 'updateProfile'])->name('profile.update');
+        Route::put('/profile/photo', [SettingController::class, 'updateProfilePhoto'])->name('photo.update');
+        Route::delete('/profile/photo', [SettingController::class, 'deleteProfilePhoto'])->name('photo.delete');
+        Route::post('/password', [SettingController::class, 'updatePassword'])->name('password.update');
 
-    // Users
-    Route::get('/users', [SettingController::class, 'usersIndex'])->name('users.index');
-    Route::post('/users', [SettingController::class, 'storeUser'])->name('users.store');
-    Route::put('/users/{user}', [SettingController::class, 'updateUser'])->name('users.update');
-    Route::delete('/users/{user}', [SettingController::class, 'destroyUser'])->name('users.destroy');
-    Route::delete('/users/{user}/photo', [SettingController::class, 'deleteUserPhoto'])->name('users.photo.delete');
+        // Users
+        Route::get('/users', [SettingController::class, 'usersIndex'])->name('users.index');
+        Route::post('/users', [SettingController::class, 'storeUser'])->name('users.store');
+        Route::put('/users/{user}', [SettingController::class, 'updateUser'])->name('users.update');
+        Route::delete('/users/{user}', [SettingController::class, 'destroyUser'])->name('users.destroy');
+        Route::delete('/users/{user}/photo', [SettingController::class, 'deleteUserPhoto'])->name('users.photo.delete');
 
-    // Categories
-    Route::get('/categories', [SettingController::class, 'categoriesIndex'])->name('categories.index');
-    Route::post('/categories', [SettingController::class, 'storeCategory'])->name('categories.store');
-    Route::put('/categories/{category}', [SettingController::class, 'updateCategory'])->name('categories.update');
-    Route::delete('/categories/{category}', [SettingController::class, 'destroyCategory'])->name('categories.destroy');
+        // Categories
+        Route::get('/categories', [SettingController::class, 'categoriesIndex'])->name('categories.index');
+        Route::post('/categories', [SettingController::class, 'storeCategory'])->name('categories.store');
+        Route::put('/categories/{category}', [SettingController::class, 'updateCategory'])->name('categories.update');
+        Route::delete('/categories/{category}', [SettingController::class, 'destroyCategory'])->name('categories.destroy');
 
-    // App / CRUD Options
-    Route::get('/app', [SettingController::class, 'appSettingIndex'])->name('app.index');
-    Route::post('/app', [SettingController::class, 'updateApp'])->name('app.update');
-});
-
+        // App / CRUD Options
+        Route::get('/app', [SettingController::class, 'appSettingIndex'])->name('app.index');
+        Route::post('/app', [SettingController::class, 'updateApp'])->name('app.update');
+    });
 
 // ---------------------------
 // SETTING FOR USER

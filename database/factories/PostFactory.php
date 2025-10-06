@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -13,7 +13,7 @@ class PostFactory extends Factory
     {
         return [
             'title' => $title = fake()->sentence(),
-            'slug' => Str::slug($title) . '-' . fake()->unique()->numberBetween(1000, 9999),
+            'slug' => Str::slug($title).'-'.fake()->unique()->numberBetween(1000, 9999),
             'author_id' => User::query()->inRandomOrder()->first()->id ?? User::factory()->create()->id,
             'category_id' => Category::query()->inRandomOrder()->first()->id ?? Category::factory()->create()->id,
             'photo' => null,

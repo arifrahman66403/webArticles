@@ -2,14 +2,13 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\View;
-use App\Policies\UserPolicy;
 use App\Models\Message;
 use App\Models\User;
+use App\Policies\UserPolicy;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -44,7 +43,7 @@ class AppServiceProvider extends ServiceProvider
         Route::bind('user', function ($value) {
             return User::where('username', $value)->firstOrFail();
         });
-        
+
         Model::preventLazyLoading(true);
     }
 }

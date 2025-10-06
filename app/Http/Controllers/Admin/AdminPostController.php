@@ -3,14 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 
 class AdminPostController extends Controller
 {
@@ -20,7 +18,7 @@ class AdminPostController extends Controller
     public function adminIndex(Request $request)
     {
         // mulai query builder, eager load relasi
-        $q = Post::query()->with(['author','category']);
+        $q = Post::query()->with(['author', 'category']);
 
         // search text (title/body)
         if ($search = $request->input('search')) {
@@ -35,14 +33,14 @@ class AdminPostController extends Controller
         // mapping/validasi kolom order
         $allowedColumns = ['created_at', 'updated_at', 'title', 'author'];
         $orderBy = in_array($setting->default_order_by, $allowedColumns) ? $setting->default_order_by : 'created_at';
-        $orderDir = in_array($setting->default_order_dir, ['asc','desc']) ? $setting->default_order_dir : 'desc';
+        $orderDir = in_array($setting->default_order_dir, ['asc', 'desc']) ? $setting->default_order_dir : 'desc';
 
         // handle special case 'author' (urut berdasarkan users.name)
         if ($orderBy === 'author') {
             // lakukan left join ke tabel users, jangan lupa select posts.*
             $q->leftJoin('users', 'users.id', '=', 'posts.author_id')
-            ->select('posts.*')
-            ->orderBy('users.name', $orderDir);
+                ->select('posts.*')
+                ->orderBy('users.name', $orderDir);
         } else {
             $q->orderBy($orderBy, $orderDir);
         }
@@ -88,7 +86,7 @@ class AdminPostController extends Controller
     {
         return view('posts.show', [
             'title' => 'Post Detail',
-            'post' => $post
+            'post' => $post,
         ]);
     }
 
@@ -103,7 +101,7 @@ class AdminPostController extends Controller
             'body' => 'required',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // ganti dari url ke upload file
             'category_id' => 'required|exists:categories,id',
-            'author_id' => 'required|exists:users,id'
+            'author_id' => 'required|exists:users,id',
         ]);
 
         $validated['slug'] = generate_unique_slug($validated['slug'], 'posts');
@@ -117,6 +115,7 @@ class AdminPostController extends Controller
 
         try {
             Post::create($validated);
+
             return redirect()->route('admin.posts.index')->with('success', 'Post created successfully.');
         } catch (\Exception $e) {
             return redirect()->route('admin.posts.index')->with('error', 'Failed to save post!');
@@ -147,7 +146,7 @@ class AdminPostController extends Controller
             'body' => 'required',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'category_id' => 'required|exists:categories,id',
-            'author_id' => 'required|exists:users,id'
+            'author_id' => 'required|exists:users,id',
         ]);
 
         // slug kalau mau diubah
@@ -170,6 +169,7 @@ class AdminPostController extends Controller
 
         try {
             $post->update($validated);
+
             return redirect()->route('admin.posts.index')->with('success', 'Post updated.');
         } catch (\Exception $e) {
             return redirect()->route('admin.posts.index')->with('error', 'Failed to update post!');
@@ -188,6 +188,7 @@ class AdminPostController extends Controller
             }
 
             $post->delete();
+
             return redirect()->route('admin.posts.index')->with('success', 'Post deleted.');
         } catch (\Exception $e) {
             return redirect()->route('admin.posts.index')->with('error', 'Failed to delete post!');

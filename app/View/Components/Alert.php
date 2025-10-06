@@ -9,7 +9,9 @@ use Illuminate\View\Component;
 class Alert extends Component
 {
     public string $type;
+
     public string $message;
+
     public bool $shake;
 
     /**

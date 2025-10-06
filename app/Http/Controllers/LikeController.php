@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
 use App\Models\Like;
-use Illuminate\Http\Request;
+use App\Models\Post;
 
 class LikeController extends Controller
 {
@@ -13,7 +12,7 @@ class LikeController extends Controller
         $user = auth()->user();
 
         // kalau sudah like jangan dobel
-        if (!$post->likes()->where('user_id', $user->id)->exists()) {
+        if (! $post->likes()->where('user_id', $user->id)->exists()) {
             $post->likes()->create([
                 'user_id' => $user->id,
             ]);

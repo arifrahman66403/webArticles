@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Author;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use App\Models\Category;
 use App\Models\Post;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AuthorPostController extends Controller
 {
@@ -29,7 +28,7 @@ class AuthorPostController extends Controller
 
         // Filter search
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $query->where('title', 'like', '%'.$request->search.'%');
         }
 
         // Filter status (klik kolom Status)
@@ -40,10 +39,10 @@ class AuthorPostController extends Controller
         // Sorting
         $sort = $request->get('sort', 'created_at'); // default created_at
         $direction = $request->get('direction', 'desc'); // default terbaru dulu
-        if (!in_array($sort, ['title', 'created_at'])) {
+        if (! in_array($sort, ['title', 'created_at'])) {
             $sort = 'created_at';
         }
-        if (!in_array($direction, ['asc', 'desc'])) {
+        if (! in_array($direction, ['asc', 'desc'])) {
             $direction = 'desc';
         }
 
@@ -71,10 +70,10 @@ class AuthorPostController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
-            'slug'        => 'required|string|max:255',
-            'body'        => 'required',
-            'photo'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'title' => 'required|string|max:255',
+            'slug' => 'required|string|max:255',
+            'body' => 'required',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'category_id' => 'required|exists:categories,id',
         ]);
 
@@ -114,7 +113,7 @@ class AuthorPostController extends Controller
 
         return view('author.posts.show', [
             'title' => 'Post Detail',
-            'post' => $post
+            'post' => $post,
         ]);
     }
 
@@ -140,10 +139,10 @@ class AuthorPostController extends Controller
         $this->authorizePost($post);
 
         $validated = $request->validate([
-            'title'       => 'required|max:255',
-            'slug'        => 'required|string|max:255',
-            'body'        => 'required',
-            'photo'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'title' => 'required|max:255',
+            'slug' => 'required|string|max:255',
+            'body' => 'required',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'category_id' => 'required|exists:categories,id',
         ]);
 
@@ -171,8 +170,8 @@ class AuthorPostController extends Controller
 
             return redirect()
                 ->route('author.posts.index')
-                ->with('success', $validated['status'] === 'draft' 
-                    ? 'Post saved as Draft.' 
+                ->with('success', $validated['status'] === 'draft'
+                    ? 'Post saved as Draft.'
                     : 'Post published successfully.');
         } catch (\Exception $e) {
             return redirect()
@@ -194,6 +193,7 @@ class AuthorPostController extends Controller
 
         try {
             $post->delete();
+
             return redirect()->route('author.posts.index')->with('success', 'Post deleted.');
         } catch (\Exception $e) {
             return redirect()->route('author.posts.index')->with('error', 'Failed to delete post!');

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
-use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -32,24 +32,25 @@ class PostController extends Controller
         //     ->paginate(12)->withQueryString();
 
         if ($search && $author) {
-            $title = 'Found ' . $posts->total() . ' results for: "' . Str::limit($search, 30) . '" from ' . $author->name;
+            $title = 'Found '.$posts->total().' results for: "'.Str::limit($search, 30).'" from '.$author->name;
         } elseif ($search && $category) {
-            $title = 'Found ' . $posts->total() . ' results for: "' . Str::limit($search, 30) . '" in Category: ' . $category->name;
+            $title = 'Found '.$posts->total().' results for: "'.Str::limit($search, 30).'" in Category: '.$category->name;
         } elseif ($search) {
-            $title = 'Found ' . $posts->total() . ' results for: "' . Str::limit($search, 50) . '"';
+            $title = 'Found '.$posts->total().' results for: "'.Str::limit($search, 50).'"';
         } elseif ($author) {
-            $title = 'Total ' . $author->posts->count() . ' Articles by: ' . $author->name;
+            $title = 'Total '.$author->posts->count().' Articles by: '.$author->name;
         } elseif ($category) {
-            $title = 'Articles in Category: ' . $category->name;
+            $title = 'Articles in Category: '.$category->name;
         } else {
             $title = 'All Articles';
         }
 
         return view('posts', [
             'title' => $title,
-            'posts' => $posts
+            'posts' => $posts,
         ]);
     }
+
     /**
      * Halaman detail post
      */
@@ -59,7 +60,7 @@ class PostController extends Controller
         if ($post->status !== 'published') {
             abort(404);
         }
-        
+
         // Eager load komentar dan relasi-relasinya secara langsung saat mengambil post
         $post->load([
             'comments' => function ($query) {
@@ -74,10 +75,10 @@ class PostController extends Controller
 
         // Ambil post lain yang terkait, efisien dalam satu query
         $otherPosts = Post::where('status', 'published') // hanya tampilkan published
-                            ->where('id', '!=', $post->id)
-                            ->inRandomOrder()
-                            ->limit(12)
-                            ->get();
+            ->where('id', '!=', $post->id)
+            ->inRandomOrder()
+            ->limit(12)
+            ->get();
 
         return view('post', [
             'title' => 'Post Detail',

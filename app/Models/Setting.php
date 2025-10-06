@@ -11,14 +11,14 @@ class Setting extends Model
         'default_order_by',
         'default_order_dir',
         'filter_author_id',
-        'filter_category_id'
+        'filter_category_id',
     ];
+
     protected $casts = [
-    'posts_per_page' => 'integer',
-    'default_order_by' => 'string',
-    'default_order_dir' => 'string',
-    'filter_author_id' => 'integer',
-    'filter_category_id' => 'integer',
+        'posts_per_page' => 'integer',
+        'default_order_by' => 'string',
+        'default_order_dir' => 'string',
+        'filter_author_id' => 'integer',
+        'filter_category_id' => 'integer',
     ];
 }
-

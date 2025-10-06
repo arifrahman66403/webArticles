@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -69,12 +69,12 @@ class AuthController extends Controller
 
         // Simpan user baru
         $user = User::create([
-            'name'              => $validated['name'],
-            'username'          => $validated['username'],
-            'email'             => $validated['email'],
+            'name' => $validated['name'],
+            'username' => $validated['username'],
+            'email' => $validated['email'],
             'email_verified_at' => now(),
-            'password'          => Hash::make($validated['password']),
-            'remember_token'    => Str::random(10),
+            'password' => Hash::make($validated['password']),
+            'remember_token' => Str::random(10),
         ]);
 
         // // Auto login setelah register

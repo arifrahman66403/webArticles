@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewMessageNotification;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\NewMessageNotification;
 
 class MessageController extends Controller
 {
@@ -15,8 +15,8 @@ class MessageController extends Controller
         $unreadCount = Message::where('is_read', false)->count();
 
         $messages = Message::query()
-            ->when($filter === 'unread', fn($q) => $q->where('is_read', false))
-            ->when($filter === 'read', fn($q) => $q->where('is_read', true))
+            ->when($filter === 'unread', fn ($q) => $q->where('is_read', false))
+            ->when($filter === 'read', fn ($q) => $q->where('is_read', true))
             ->latest()
             ->get();
 
@@ -61,6 +61,7 @@ class MessageController extends Controller
     public function destroyAll()
     {
         Message::truncate(); // hapus semua data
+
         return redirect()->route('message.index')->with('success', 'All messages deleted successfully.');
     }
 }

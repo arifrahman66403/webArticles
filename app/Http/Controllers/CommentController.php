@@ -13,11 +13,11 @@ class CommentController extends Controller
         $request->validate([
             'body' => 'required|string|max:500',
             'parent_id' => 'nullable|exists:comments,id',
-            'reply_to'  => 'nullable|exists:users,id',
+            'reply_to' => 'nullable|exists:users,id',
         ]);
 
         $parentId = $request->input('parent_id');
-        $replyTo  = $request->input('reply_to');
+        $replyTo = $request->input('reply_to');
 
         // Maksimal 2 level (reply ke reply tetap parent root)
         if ($parentId) {
@@ -28,11 +28,11 @@ class CommentController extends Controller
         }
 
         Comment::create([
-            'post_id'   => $post->id,
-            'user_id'   => auth()->id(),
+            'post_id' => $post->id,
+            'user_id' => auth()->id(),
             'parent_id' => $parentId,
-            'reply_to'  => $replyTo,
-            'body'      => $request->body,
+            'reply_to' => $replyTo,
+            'body' => $request->body,
         ]);
 
         return back()->with('success', 'Comment added!');

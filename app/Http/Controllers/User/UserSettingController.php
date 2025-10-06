@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class UserSettingController extends Controller
 {
@@ -17,16 +17,16 @@ class UserSettingController extends Controller
     public function profile()
     {
         $user = Auth::user();
-        
+
         // menghitung total post dan total likes dengan query builder
         $total_posts = \App\Models\Post::where('author_id', $user->id)
-                 ->where('status', 'published')
-                 ->count();
+            ->where('status', 'published')
+            ->count();
 
         $total_likes = \DB::table('likes')
-                ->join('posts', 'likes.post_id', '=', 'posts.id')
-                ->where('posts.author_id', $user->id)
-                ->count();
+            ->join('posts', 'likes.post_id', '=', 'posts.id')
+            ->where('posts.author_id', $user->id)
+            ->count();
 
         return view('user.profile', compact('user', 'total_posts', 'total_likes'));
     }
@@ -37,6 +37,7 @@ class UserSettingController extends Controller
     public function edit()
     {
         $user = Auth::user();
+
         return view('user.setting', compact('user'));
     }
 
@@ -48,7 +49,7 @@ class UserSettingController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'profile_photo' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:2048']
+            'profile_photo' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ]);
 
         // hapus foto lama
@@ -70,11 +71,11 @@ class UserSettingController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'name'              => 'required|string|max:255',
-            'username'          => ['required', 'string', 'max:255', Rule::unique('users','username')->ignore($user->id)],
-            'email'              => ['required','email','max:255', Rule::unique('users','email')->ignore($user->id)],
-            'current_password'  => ['required','current_password'], // Validasi password saat ini
-            'password'           => ['nullable','min:8','confirmed'],
+            'name' => 'required|string|max:255',
+            'username' => ['required', 'string', 'max:255', Rule::unique('users', 'username')->ignore($user->id)],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
+            'current_password' => ['required', 'current_password'], // Validasi password saat ini
+            'password' => ['nullable', 'min:8', 'confirmed'],
         ], [
             'current_password.current_password' => 'Current password is incorrect.', // Pesan error custom
         ]);

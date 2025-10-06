@@ -2,12 +2,13 @@
 
 namespace App\View\Components;
 
-use Illuminate\View\Component;
 use Illuminate\Support\Facades\Route;
+use Illuminate\View\Component;
 
-class SideLinkAdmin extends Component
+class SideLinkadmin extends Component
 {
     public $href;
+
     public $active;
 
     public function __construct($href)
@@ -26,7 +27,7 @@ class SideLinkAdmin extends Component
         }
 
         // Cek aktif berdasarkan route sekarang
-        $this->active = $prefix && request()->routeIs($prefix . '*');
+        $this->active = $prefix && request()->routeIs($prefix.'*');
     }
 
     public function render()

@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\Post;
 use App\Models\Category;
+use App\Models\Post;
+use App\Models\User;
 
 class RouteController extends Controller
 {
@@ -26,7 +22,7 @@ class RouteController extends Controller
             'user_count' => User::count(),
             'author_count' => User::whereIn('role', ['superadmin', 'author', 'admin'])->count(),
             'category_count' => Category::count(),
-            'posts' => Post::orderBy('updated_at', 'desc')->take(5)->get()
+            'posts' => Post::orderBy('updated_at', 'desc')->take(5)->get(),
         ]);
     }
 
@@ -43,21 +39,21 @@ class RouteController extends Controller
     public function show(User $user)
     {
         // hanya superadmin, admmin, dan author yang boleh ditampilkan
-        if (!in_array($user->role, ['superadmin', 'admin', 'author'])) {
+        if (! in_array($user->role, ['superadmin', 'admin', 'author'])) {
             abort(403, 'mau lihat profile siapa tu?'); // biar gak bisa diintip lewat URL
         }
-        
+
         return view('aboutuser', [
             'title' => 'Author Detail',
             'user' => $user,
             'total_posts' => Post::where('author_id', $user->id)
-                     ->where('status', 'published')
-                     ->count(),
+                ->where('status', 'published')
+                ->count(),
 
             'total_likes' => \DB::table('likes')
-                    ->join('posts', 'likes.post_id', '=', 'posts.id')
-                    ->where('posts.author_id', $user->id)
-                    ->count(),
+                ->join('posts', 'likes.post_id', '=', 'posts.id')
+                ->where('posts.author_id', $user->id)
+                ->count(),
         ]);
     }
 
@@ -73,8 +69,8 @@ class RouteController extends Controller
                     'location' => 'Siak, Riau, Indonesia',
                     'bio' => 'Saya adalah seorang pengembang web yang berfokus pada pengembangan aplikasi Laravel.',
                     'link' => '@incubatormen',
-                ]
-            ]
+                ],
+            ],
         ]);
     }
 }

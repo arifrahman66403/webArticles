@@ -3,11 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
@@ -24,7 +22,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'role' => 'superadmin',
-            'remember_token' => Str::random(10)
+            'remember_token' => Str::random(10),
         ]);
         User::create([
             'name' => 'Ilham White',
@@ -34,7 +32,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'role' => 'admin',
-            'remember_token' => Str::random(10)
+            'remember_token' => Str::random(10),
         ]);
         User::create([
             'name' => 'Eka Tung Tung',
@@ -44,7 +42,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'role' => 'author',
-            'remember_token' => Str::random(10)
+            'remember_token' => Str::random(10),
         ]);
         User::create([
             'name' => 'Rendy Pratama',
@@ -54,7 +52,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'role' => 'author',
-            'remember_token' => Str::random(10)
+            'remember_token' => Str::random(10),
         ]);
         User::create([
             'name' => 'Ujang Brondol',
@@ -64,7 +62,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'role' => 'author',
-            'remember_token' => Str::random(10)
+            'remember_token' => Str::random(10),
         ]);
         User::create([
             'name' => 'Aidul White',
@@ -74,7 +72,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'role' => 'author',
-            'remember_token' => Str::random(10)
+            'remember_token' => Str::random(10),
         ]);
         User::factory(3)->create();
     }

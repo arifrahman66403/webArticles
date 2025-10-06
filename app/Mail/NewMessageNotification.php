@@ -21,6 +21,6 @@ class NewMessageNotification extends Mailable
     public function build()
     {
         return $this->subject('Pesan Baru dari Website')
-                    ->view('contact');
+            ->view('contact');
     }
 }

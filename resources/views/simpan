@@ -1,0 +1,358 @@
+<el-dialog>
+    <dialog id="drawer" aria-labelledby="drawer-title" class="fixed inset-0 size-auto max-h-none max-w-none overflow-hidden bg-transparent not-open:hidden backdrop:bg-transparent">
+      <el-dialog-backdrop class="absolute inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out data-closed:opacity-0"></el-dialog-backdrop>
+
+      <div tabindex="0" class="absolute inset-0 pl-10 focus:outline-none sm:pl-16">
+        <el-dialog-panel class="group/dialog-panel relative ml-auto block size-full max-w-md transform transition duration-500 ease-in-out data-closed:translate-x-full sm:duration-700">
+          <!-- Close button, show/hide based on slide-over state. -->
+          <div class="absolute top-0 left-0 -ml-8 flex pt-4 pr-2 duration-500 ease-in-out group-data-closed/dialog-panel:opacity-0 sm:-ml-10 sm:pr-4">
+            <button type="button" command="close" commandfor="drawer" class="relative rounded-md text-gray-300 hover:text-white focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-hidden">
+              <span class="absolute -inset-2.5"></span>
+              <span class="sr-only">Close panel</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-6">
+                <path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="flex h-full flex-col overflow-y-auto bg-white py-6 shadow-xl">
+            <div class="px-4 sm:px-6">
+              <h2 id="drawer-title" class="text-base font-semibold text-gray-900">Others</h2>
+            </div>
+            <div class="relative mt-6 flex-1 px-4 sm:px-6">              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                @foreach($other->random(12) as $p)
+                <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                  <div class="h-40 bg-gray-200 rounded-md mb-4 overflow-hidden">
+                  <img src="{{$p->photo}}" alt="{{$p->title}}" class="w-full h-full object-cover">
+                  </div>
+                  <h3 class="text-lg font-semibold mb-2">{{$p->title}}</h3>
+                  <p class="text-gray-600 text-sm mb-3">{{$p->excerpt}}</p>
+                  <a href="/posts/{{$p->slug}}" class="text-blue-500 hover:text-blue-700 text-sm font-medium">Read more →</a>
+                </div>
+                @endforeach
+ 
+            </div>
+          </div>
+        </el-dialog-panel>
+      </div>
+    </dialog>
+  </el-dialog>
+
+
+
+
+
+
+<main class="pt-8 pb-16 lg:pt-16 lg:pb-24 dark:bg-gray-900 antialiased">
+  <div class="flex justify-between px-4 mx-auto max-w-screen-xl">
+    <article class="mx-auto w-full max-w-4xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
+      <header class="mb-4 lg:mb-6 not-format">
+        <div class="flex justify-between items-center">
+          <a href="/posts" class="font-medium text-md text-blue-500 hover:underline">
+            &laquo; Back to all posts
+          </a>
+          <button command="show-modal" commandfor="drawer" class="rounded-md bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4">Show Another</button>
+        </div>
+        <address class="flex items-center my-6 not-italic">
+          <div class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
+            <img class="mr-4 w-16 h-16 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-2.jpg" alt="{{$post->author->name}}" />
+            <div>
+              <a href="/posts?author={{$post->author->username}}" rel="author" class="text-xl font-bold text-gray-900 dark:text-white">{{$post->author->name}}</a>
+              <p class="text-base text-gray-500 dark:text-gray-400 mb-1">{{$post->created_at->diffForHumans()}}</p>
+              <a href="/posts?category={{$post->category->slug}}" class="hover:text-green-500">
+                <span class="bg-{{$post->category->color}}-100 text-primary-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-primary-200 dark:text-primary-800 hover:text-green-500">
+                  {{$post->category->name}}
+                </span>
+              </a>
+            </div>
+          </div>
+        </address>
+        <img class="w-full h-auto rounded-md mb-1" src="{{$post->photo}}" alt="{{$post->title}}" />
+        <h1 class="mb-4 ml-3 text-3xl font-extrabold leading-tight text-gray-900 lg:mb-6 lg:text-4xl dark:text-white">{{$post->title}}</h1>
+      </header>
+      <div class="grid grid-cols-1 my-2 md:grid-cols-2">
+        <p class="mx-5">{{$post->body}}</p>
+        <p class="mx-5">{{$post->body}}</p>
+      </div>
+    </article>
+  </div>
+</main>
+
+
+Route::get('/posts', function () {
+    $author = User::firstWhere('username', request('author'));
+    $category = Category::firstWhere('slug', request('category'));
+    $search = request('search');
+
+    $title = 'All Articles';
+
+    if ($category) {
+        $title = 'Articles in Category: ' . $category->name;
+    }
+
+    if ($author) {
+        $title = 'Total ' . $author->posts->count() . ' Articles by: ' . $author->name;
+    }
+
+    if ($search) {
+        $title = 'Search Result for: ' . Str::limit($search, 50);
+    }
+
+    return view('posts', [
+        'title' => $title,
+        'posts' => Post::latest()->filter(request(['search', 'category', 'author']))
+            ->paginate(12)->withQueryString()
+    ]);
+});
+
+
+
+Route::get('/posts/{post:slug}', function (Post $post) {
+    return view('post', [
+        'title' => 'Single Post',
+        'post' => $post,
+        'other' => Post::latest()->where('id', '!=', $post->id)->inRandomOrder()->take(12)->get(),
+    ]);
+});
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ $title ?? 'Admin Dashboard' }}</title>
+    @vite('resources/css/app.css')
+</head>
+<body class="bg-gray-100">
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800 text-white min-h-screen fixed">
+            <div class="p-4 text-lg font-bold border-b border-gray-700">
+                Admin Panel
+            </div>
+            <nav class="mt-4 space-y-2">
+                <a href="/admin/dashboard" class="block px-4 py-2 hover:bg-gray-700">Dashboard</a>
+                <a href="/home" class="block px-4 py-2 hover:bg-gray-700">Home</a>
+                <a href="/posts" class="block px-4 py-2 hover:bg-gray-700">Blog</a>
+                <a href="/contac" class="block px-4 py-2 hover:bg-gray-700">Contac</a>
+                <a href="/about" class="block px-4 py-2 hover:bg-gray-700">About</a>
+                <a href="/admin/posts" class="block px-4 py-2 hover:bg-gray-700">CRUD Posts</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="w-full text-left px-4 py-2 hover:bg-red-700">Logout</button>
+                </form>
+            </nav>
+        </aside>
+
+        <!-- Content -->
+        <main class="ml-64 p-6 w-full">
+            @yield('content')
+        </main>
+    </div>
+
+</body>
+</html>
+
+https://ui-avatars.com/api/?name=
+
+bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 
+
+
+
+fixed top-0 left-0 w-64 h-screen bg-gray-800 text-white transform transition-all duration-300 ease-in-out z-50
+           md:translate-x-0 md:flex-shrink-0
+fixed inset-y-0 left-0 w-64 bg-gray-800 text-white transform transition-transform duration-300 ease-in-out z-50
+           md:translate-x-0 md:relative md:flex-shrink-0
+
+
+
+
+
+<aside 
+    x-data="{ collapsed: false }"
+    class="fixed top-0 left-0 h-screen bg-gray-800 text-white transform transition-all duration-300 ease-in-out z-50
+           md:translate-x-0 md:flex-shrink-0"
+    :class="{'-translate-x-full': !isOpen, 'translate-x-0': isOpen, 'w-20': collapsed, 'w-64': !collapsed}"
+>
+    <!-- Header Sidebar (mobile only) -->
+    <div class="p-4 border-b border-gray-700 flex justify-between items-center md:hidden">
+        <h2 class="text-lg font-bold">Menu</h2>
+        <button @click="isOpen = false" class="text-gray-300 hover:text-white">
+            ✕
+        </button>
+    </div>
+
+    <!-- Tombol Collapse (desktop only) -->
+    <div class="hidden md:flex justify-end p-2">
+        <button 
+            @click="collapsed = !collapsed" 
+            class="p-2 rounded-md hover:bg-gray-700 transition"
+            :title="collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'"
+        >
+            <span x-show="!collapsed">«</span>
+            <span x-show="collapsed">»</span>
+        </button>
+    </div>
+
+    <!-- Menu -->
+    <div class="p-6 overflow-y-auto h-full">
+        <h1 
+            class="text-white font-bold text-2xl mb-6 transition-all duration-300"
+            :class="{'hidden': collapsed}"
+        >
+            Admin Panel
+        </h1>
+        <nav class="space-y-2">
+            <x-side-linkadmin href="/home" :active="request()->is('/home')">
+                <span :class="{'hidden': collapsed}">Home</span>
+                <span x-show="collapsed">🏠</span>
+            </x-side-linkadmin>
+            
+            <x-side-linkadmin href="{{ route('admin.posts.index') }}" :active="request()->is('admin/posts')">
+                <span :class="{'hidden': collapsed}">Posts</span>
+                <span x-show="collapsed">📝</span>
+            </x-side-linkadmin>
+
+            <x-side-linkadmin href="{{ route('message.index') }}" :active="request()->is('admin/message')">
+                <span :class="{'hidden': collapsed}">Message</span>
+                <span x-show="collapsed">💬</span>
+            </x-side-linkadmin>
+
+            <x-side-linkadmin href="{{ route('admin.setting') }}" :active="request()->is('admin/setting')">
+                <span :class="{'hidden': collapsed}">Setting</span>
+                <span x-show="collapsed">⚙️</span>
+            </x-side-linkadmin>
+
+            <form method="POST" action="{{ route('logout') }}" onsubmit="return confirm('Are you sure you want to log out?')">
+                @csrf
+                <button type="submit" class="block w-full text-left px-3 py-2 rounded-md font-bold hover:bg-gray-700 hover:bg-red-700">
+                    <span :class="{'hidden': collapsed}">Logout</span>
+                    <span x-show="collapsed">🚪</span>
+                </button>
+            </form>
+        </nav>
+    </div>
+</aside>
+
+
+
+
+
+
+/**
+     * Form tambah postingan
+     */
+    public function create()
+    {
+        return view('admin.posts.create');
+    }
+
+    /**
+     * Simpan postingan baru
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title'       => 'required|string|max:255',
+            'content'     => 'required|string',
+            'category_id' => 'nullable|exists:categories,id',
+        ]);
+
+        $validated['author_id'] = auth()->id();
+
+        Post::create($validated);
+
+        return redirect()->route('admin.posts.index')->with('success', 'Post berhasil ditambahkan.');
+    }
+
+    /**
+     * Tampilkan detail postingan
+     */
+    public function show(Post $post)
+    {
+        return view('admin.posts.show', compact('post'));
+    }
+
+    /**
+     * Form edit postingan
+     */
+    public function edit(Post $post)
+    {
+        return view('admin.posts.edit', compact('post'));
+    }
+
+    /**
+     * Update postingan
+     */
+    public function update(Request $request, Post $post)
+    {
+        $validated = $request->validate([
+            'title'       => 'required|string|max:255',
+            'content'     => 'required|string',
+            'category_id' => 'nullable|exists:categories,id',
+        ]);
+
+        $post->update($validated);
+
+        return redirect()->route('admin.posts.index')->with('success', 'Post berhasil diperbarui.');
+    }
+
+    /**
+     * Hapus postingan
+     */
+    public function destroy(Post $post)
+    {
+        $post->delete();
+
+        return redirect()->route('admin.posts.index')->with('success', 'Post berhasil dihapus.');
+    }
+
+
+
+@props(['active' => false])
+
+<a {{ $attributes }} class="{{ $active ? 'bg-gray-900 text-indigo-600 font-bold' : 'text-white hover:bg-gray-700 hover:text-white'}}
+block px-3 py-2 rounded-md font-bold"
+aria-current="{{ $active ? 'page' : false }}">{{$slot}}</a>
+
+
+
+public function adminIndex()
+    {
+        $query = Post::all();
+
+        // Filter: Pencarian teks
+        if (request('search')) {
+            $search = request('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                ->orWhere('body', 'like', "%{$search}%");
+            });
+        }
+
+        $setting = Setting::firstOrCreate(['id' => 1]);
+        $authors = User::whereIn('role', ['admin', 'author'])->get(); //  ambil user yang role-nya admin atau author
+        $categories = Category::all();
+        
+        $posts = $query->orderBy($setting->default_order_by, $setting->default_order_dir)
+            ->when($setting->filter_author_id, function ($query) use ($setting) {
+                $query->where('author_id', $setting->filter_author_id);
+            })
+            ->when($setting->filter_category_id, function ($query) use ($setting) {
+                $query->where('category_id', $setting->filter_category_id);
+            })
+            ->paginate($setting->posts_per_page);
+
+        return view('posts.index', [
+            'title' => 'All Posts',
+            'posts' => $posts,
+            'setting' => $setting,
+            'authors' =>  $authors, // panggil from compact('$authors')
+            'categories' => $categories,
+        ]);
+    }

@@ -23,9 +23,8 @@ class MessageController extends Controller
         return view('admin.message.index', compact('messages', 'filter', 'unreadCount'));
     }
 
-    public function show($id)
+    public function show(Message $message)
     {
-        $message = Message::findOrFail($id);
         return view('admin.message.show', compact('message'));
     }
 
@@ -45,17 +44,15 @@ class MessageController extends Controller
         return back()->with('success', 'message sent successfully.');
     }
 
-    public function markAsRead($id)
+    public function markAsRead(Message $message)
     {
-        $message = Message::findOrFail($id);
         $message->update(['is_read' => true]);
 
         return redirect()->route('message.index')->with('success', 'message marked as read.');
     }
 
-    public function destroy($id)
+    public function destroy(Message $message)
     {
-        $message = Message::findOrFail($id);
         $message->delete();
 
         return redirect()->route('message.index')->with('success', 'message deleted successfully.');

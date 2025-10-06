@@ -15,7 +15,7 @@
 
         <!-- Indikator Reply -->
         @if($comment->reply_to && $comment->replyToUser)
-            <span class="text-xs text-indigo-600">↪ Replying to {{ $comment->replyToUser->name }}</span>
+            <span class="text-xs text-indigo-600">- Replying to {{ $comment->replyToUser->name }}</span>
         @endif
 
         <!-- Body -->
@@ -81,7 +81,7 @@
                                 <span class="text-xs text-gray-500">{{ $reply->created_at->diffForHumans() }}</span>
                                 {{-- Tambahkan cek untuk replyToUser di level ini --}}
                                 @if($reply->replyToUser)
-                                    <span class="text-xs text-indigo-600">↪ Replying to {{ $reply->replyToUser->name }}</span>
+                                    <span class="text-xs text-indigo-600">- Replying to {{ $reply->replyToUser->name }}</span>
                                 @endif
                                 <p class="text-gray-700 text-sm mt-1">{{ $reply->body }}</p>
                             </div>

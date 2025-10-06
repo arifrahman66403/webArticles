@@ -51,7 +51,7 @@
                         </div>
 
                         <div class="flex gap-2">
-                            <a href="{{ route('message.show', $message->id) }}" 
+                            <a href="{{ route('message.show', $message->email) }}" 
                                class="px-3 py-1 rounded-md border text-sm hover:bg-gray-100 dark:hover:bg-gray-600">
                                 More detail
                             </a>
@@ -59,7 +59,7 @@
                                     class="px-3 py-1 rounded-md border text-sm hover:bg-gray-100 dark:hover:bg-gray-600">
                                 View
                             </button>
-                            <form action="{{ route('message.destroy', $message->id) }}" method="POST"
+                            <form action="{{ route('message.destroy', $message->email) }}" method="POST"
                                 onsubmit="return confirm('Delete this message?')">
                                 @csrf @method('DELETE')
                                 <button class="px-3 py-1 rounded-md bg-red-600 text-white text-sm hover:bg-red-700">
@@ -89,7 +89,7 @@
 
                                 <div class="flex justify-end gap-2 mt-6">
                                     @if(!$message->is_read)
-                                        <form action="{{ route('message.read', $message->id) }}" method="POST">
+                                        <form action="{{ route('message.read', $message->email) }}" method="POST">
                                             @csrf @method('PATCH')
                                             <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
                                                 Mark as Read

@@ -38,7 +38,7 @@ Route::post('/home', [RouteController::class, 'store'])->name('store');
 Route::get('/about', [RouteController::class, 'about'])->name('about');
 Route::get('/about/{user}', [RouteController::class, 'show']);
 Route::get('/contact', [RouteController::class, 'contact']);
-Route::post('/contact', [MessageController::class, 'store'])->name('contact.store')->middleware('auth');
+Route::post('/contact', [MessageController::class, 'store'])->name('contact.store');
 
 // ---------------------------
 // ARTICLES FOR ALL USERS
@@ -56,10 +56,10 @@ Route::delete('/posts/{post}/unlike', [LikeController::class, 'unlike'])->name('
 // ---------------------------
 Route::middleware(['auth', 'role:superadmin,admin'])->name('message.')->group(function () {
     Route::get('/admin/message', [MessageController::class, 'index'])->name('index');
-    Route::get('/admin/message/{id}', [MessageController::class, 'show'])->name('show');
-    Route::delete('/admin/message/{id}', [MessageController::class, 'destroy'])->name('destroy');
+    Route::get('/admin/message/{message:email}', [MessageController::class, 'show'])->name('show');
+    Route::delete('/admin/message/{message:email}', [MessageController::class, 'destroy'])->name('destroy');
     Route::delete('message/destroy-all', [MessageController::class, 'destroyAll'])->name('destroyAll');
-    Route::patch('/admin/message/{id}/read', [MessageController::class, 'markAsRead'])->name('read');
+    Route::patch('/admin/message/{message:email}/read', [MessageController::class, 'markAsRead'])->name('read');
 });
 
 // ---------------------------

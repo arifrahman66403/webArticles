@@ -61,14 +61,14 @@
 
         <!-- Header -->
         <header class="mb-4 lg:mb-6 not-format">
-          <div class="flex justify-between items-center">
+          <!-- <div class="flex justify-between items-center">
             <a href="{{ url()->previous() }}" 
               class="px-2 py-1 text-sm md:px-3 md:py-1 md:text-lg font-semibold text-indigo-500 hover:rounded-lg hover:bg-indigo-500 hover:text-white transition">
               Back to all posts
             </a>
-          </div>
+          </div> -->
 
-          <address class="flex items-center my-6 not-italic">
+          <address class="flex items-center mb-6 not-italic">
             <div class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
               <a href="/about/{{ $post->author->username }}" 
                 class="hover:ring-2 hover:focus:ring-offset-2 hover:focus:ring-indigo-500 rounded-full mr-4">
@@ -126,7 +126,7 @@
                         01-2-2V6a2 2 0 012-2h14a2 2 0 
                         012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                   </svg>
-                  <span>{{ $post->comments()->count() }}</span>
+                  <span>{{ $post->comments_count }}</span>
                 </button>
 
                 <!-- Hidden Comment Form -->

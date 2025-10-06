@@ -81,6 +81,14 @@ class Post extends Model
             ->with(['user', 'replyToUser', 'replies']);
     }
 
+    public function getCommentsCountAttribute()
+    {
+        return $this->comments()
+            ->withCount('replies')
+            ->get()
+            ->sum(fn($c) => 1 + $c->replies_count);
+    }
+
     public function getPhotoUrlAttribute()
     {
         if ($this->photo) {

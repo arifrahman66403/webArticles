@@ -111,37 +111,47 @@
 
               <!-- Like -->
               @auth
-                <livewire:like-button :post="$post" :wire:key="'like-button-'.$post->id" />
+          <livewire:like-button :post="$post" :wire:key="'like-button-'.$post->id" />
+              @else
+          <p class="text-gray-500">
+            <a href="/login" class="text-indigo-500 hover:underline">Login</a> to like this post.
+          </p>
               @endauth
 
               <!-- Comment Button & Form -->
               <div x-data="{ showCommentForm: false }">
-                <button @click="showCommentForm = !showCommentForm" 
-                  class="flex items-center gap-1 text-gray-500 hover:text-indigo-600 transition">
-                  <!-- Comment Icon -->
-                  <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" 
-                      fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 
-                        01-2-2V6a2 2 0 012-2h14a2 2 0 
-                        012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                  </svg>
-                  <span>{{ $post->comments_count }}</span>
-                </button>
+          @auth
+            <button @click="showCommentForm = !showCommentForm" 
+              class="flex items-center gap-1 text-gray-500 hover:text-indigo-600 transition">
+              <!-- Comment Icon -->
+              <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" 
+            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+            d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 
+              01-2-2V6a2 2 0 012-2h14a2 2 0 
+              012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+              </svg>
+              <span>{{ $post->comments_count }}</span>
+            </button>
 
-                <!-- Hidden Comment Form -->
-                <form x-show="showCommentForm" x-transition 
-                      action="{{ route('comments.store', $post) }}" 
-                      method="POST" class="mb-6">
-                  @csrf
-                  <textarea name="body" rows="2"
-                    class="w-full border rounded-md p-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="Write your comment..."></textarea>
-                  <button type="submit"
-                    class="mt-2 px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-md text-xs md:text-sm transition">
-                    Post Comment
-                  </button>
-                </form>
+            <!-- Hidden Comment Form -->
+            <form x-show="showCommentForm" x-transition 
+            action="{{ route('comments.store', $post) }}" 
+            method="POST" class="mb-6">
+              @csrf
+              <textarea name="body" rows="2"
+                class="w-full border rounded-md p-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="Write your comment..."></textarea>
+              <button type="submit"
+                class="mt-2 px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-md text-xs md:text-sm transition">
+                Post Comment
+              </button>
+            </form>
+          @else
+            <p class="text-gray-500">
+              <a href="/login" class="text-indigo-500 hover:underline">Login</a> to comment.
+            </p>
+          @endauth
               </div>
             </div>
           </div>

@@ -68,22 +68,22 @@
                             if ($isTitle && $direction === 'asc') {
                                 $nextDirection = 'desc';
                             } elseif ($isTitle && $direction === 'desc') {
-                                $nextDirection = null; // klik ke-3 = reset
+                                $nextDirection = null; // reset
                             }
                         @endphp
 
-                        <a href="{{ $nextDirection 
+                        <a href="{{ $nextDirection
                             ? route('author.posts.index', [
                                 'sort' => 'title',
                                 'direction' => $nextDirection,
                                 'category' => request('category'),
-                                'search' => request('search')
-                            ]) 
+                                'search' => request('search'),
+                            ])
                             : route('author.posts.index', [
                                 'category' => request('category'),
-                                'search' => request('search')
-                            ]) 
-                        }}" 
+                                'search' => request('search'),
+                            ])
+                        }}"
                         class="flex items-center space-x-1 hover:text-blue-600">
                             <span>Title</span>
                             @if($isTitle)
@@ -114,18 +114,18 @@
                             }
                         @endphp
 
-                        <a href="{{ $nextDirection 
+                        <a href="{{ $nextDirection
                             ? route('author.posts.index', [
                                 'sort' => 'created_at',
                                 'direction' => $nextDirection,
                                 'category' => request('category'),
-                                'search' => request('search')
-                            ]) 
+                                'search' => request('search'),
+                            ])
                             : route('author.posts.index', [
                                 'category' => request('category'),
-                                'search' => request('search')
-                            ]) 
-                        }}" 
+                                'search' => request('search'),
+                            ])
+                        }}"
                         class="flex items-center space-x-1 hover:text-blue-600">
                             <span>Created</span>
                             @if($isCreated)
@@ -147,25 +147,21 @@
                             if ($statusFilter === 'draft') {
                                 $nextStatus = 'published';
                             } elseif ($statusFilter === 'published') {
-                                $nextStatus = null; // klik ke-3 = reset
+                                $nextStatus = null; // reset
                             }
                         @endphp
 
-                        <a href="{{ $nextStatus 
+                        <a href="{{ $nextStatus
                             ? route('author.posts.index', [
                                 'status' => $nextStatus,
-                                'sort' => request('sort'),
-                                'direction' => request('direction'),
                                 'category' => request('category'),
-                                'search' => request('search')
-                            ]) 
+                                'search' => request('search'),
+                            ])
                             : route('author.posts.index', [
-                                'sort' => request('sort'),
-                                'direction' => request('direction'),
                                 'category' => request('category'),
-                                'search' => request('search')
-                            ]) 
-                        }}" 
+                                'search' => request('search'),
+                            ])
+                        }}"
                         class="flex items-center space-x-1 hover:text-blue-600">
                             <span>Status</span>
                             @if($statusFilter)

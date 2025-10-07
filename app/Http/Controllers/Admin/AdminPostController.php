@@ -58,7 +58,7 @@ class AdminPostController extends Controller
         $authors = User::whereIn('role', ['superadmin', 'admin', 'author'])->get();
         $categories = Category::all();
 
-        return view('posts.index', [
+        return view('admin.posts.index', [
             'title' => 'All Posts',
             'posts' => $posts,
             'setting' => $setting,
@@ -72,7 +72,7 @@ class AdminPostController extends Controller
      */
     public function create()
     {
-        return view('posts.create', [
+        return view('admin.posts.create', [
             'title' => 'Create New Post',
             'categories' => Category::all(),
             'authors' => User::whereIn('role', ['superadmin', 'admin', 'author'])->get(), // kirim user yang role-nya admin atau author
@@ -84,7 +84,7 @@ class AdminPostController extends Controller
      */
     public function adminShow(Post $post)
     {
-        return view('posts.show', [
+        return view('admin.posts.show', [
             'title' => 'Post Detail',
             'post' => $post,
         ]);
@@ -127,7 +127,7 @@ class AdminPostController extends Controller
      */
     public function edit(Post $post)
     {
-        return view('posts.edit', [
+        return view('admin.posts.edit', [
             'title' => 'Edit Post',
             'post' => $post,
             'categories' => Category::all(),

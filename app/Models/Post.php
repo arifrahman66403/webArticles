@@ -30,7 +30,7 @@ class Post extends Model
     {
         static::addGlobalScope('authorOnly', function (Builder $builder) {
             $builder->whereHas('author', function ($q) {
-                $q->whereIn('role', ['superadmin', 'admin', 'author']); // admin dan author yang bisa menampilkan post
+                $q->whereIn('role', ['superadmin', 'admin', 'author']); // superadmin, admin, dan author yang hanya bisa menampilkan post
             });
         });
     }
@@ -39,8 +39,11 @@ class Post extends Model
     {
         if ($filters['search'] ?? false) {
             $query->where(function ($q) use ($filters) {
-                $q->where('title', 'like', '%'.$filters['search'].'%')
-                    ->orWhere('body', 'like', '%'.$filters['search'].'%');
+            $q->where('title', 'like', '%'.$filters['search'].'%')
+                ->orWhere('body', 'like', '%'.$filters['search'].'%')
+                ->orWhereHas('category', function ($query) use ($filters) {
+                $query->where('name', 'like', '%'.$filters['search'].'%');
+                });
             });
         }
 

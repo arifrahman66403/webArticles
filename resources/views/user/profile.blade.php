@@ -51,13 +51,13 @@
                         <p class="text-xs font-semibold text-gray-500 uppercase">Role</p>
                         <p class="text-lg font-medium text-gray-800 mt-1 capitalize">{{ Auth::user()->role }}</p>
                     </div>
-
+                    
+                    @if(Auth::user()->role === 'author' || Auth::user()->role === 'admin' || Auth::user()->role === 'superadmin')
                     <div class="p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition">
                         <p class="text-xs font-semibold text-gray-500 uppercase">Total Likes</p>
                         <p class="text-lg font-medium text-gray-800 mt-1">{{ $total_likes }}</p>
                     </div>
 
-                    @if(Auth::user()->role === 'author' || Auth::user()->role === 'admin' || Auth::user()->role === 'superadmin')
                     <div class="p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition">
                         <p class="text-xs font-semibold text-gray-500 uppercase">My Articles</p>
                         <p class="text-lg font-medium text-gray-800 mt-1">{{ $total_posts }}</p>

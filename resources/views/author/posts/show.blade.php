@@ -21,7 +21,7 @@
         <div class="mb-6">
             <p class="text-sm text-gray-600">
                 Status:
-                <span class="px-4 py-1.5 rounded-md font-semibold text-sm
+                <span class="px-3 py-1.5 rounded-md font-semibold text-sm
                     @if($post->status === 'published')
                         bg-green-100 text-green-800
                     @elseif($post->status === 'draft')

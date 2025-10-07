@@ -1,13 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminPostController;
+use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Author\AuthorPostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\LikeController;
-use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\User\UserSettingController;
@@ -40,21 +40,23 @@ Route::post('/contact', [MessageController::class, 'store'])->name('contact.stor
 // ARTICLES FOR ALL USERS
 // ---------------------------
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
-Route::get('/posts/{post:slug}', [PostController::class, 'show'])->middleware(['auth'])->name('posts.show');
+Route::get('/posts/{post:slug}', [PostController::class, 'show'])->name('posts.show');
 Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
-Route::delete('/comments/{comment}', [CommentController::class, 'delete'])->name('comments.delete');
+Route::delete('/posts/comments/{comment}', [CommentController::class, 'delete'])->name('comments.delete');
 Route::post('/posts/{post}/like', [LikeController::class, 'like'])->name('posts.like');
 Route::delete('/posts/{post}/unlike', [LikeController::class, 'unlike'])->name('posts.unlike');
 
 // ---------------------------
 // MESSAGE FOR ADMIN
 // ---------------------------
-Route::middleware(['auth', 'role:superadmin,admin'])->name('message.')->group(function () {
-    Route::get('/admin/message', [MessageController::class, 'index'])->name('index');
-    Route::get('/admin/message/{message:email}', [MessageController::class, 'show'])->name('show');
-    Route::delete('/admin/message/{message:email}', [MessageController::class, 'destroy'])->name('destroy');
-    Route::delete('message/destroy-all', [MessageController::class, 'destroyAll'])->name('destroyAll');
-    Route::patch('/admin/message/{message:email}/read', [MessageController::class, 'markAsRead'])->name('read');
+Route::prefix('admin')
+    ->middleware(['auth', 'role:superadmin,admin'])->name('message.')
+    ->group(function () {
+    Route::get('/message', [MessageController::class, 'index'])->name('index');
+    Route::delete('/message/destroy-all', [MessageController::class, 'destroyAll'])->name('destroyAll');
+    Route::get('/message/{message:email}', [MessageController::class, 'show'])->name('show');
+    Route::delete('/message/{message:email}', [MessageController::class, 'destroy'])->name('destroy');
+    Route::patch('/message/{message:email}/read', [MessageController::class, 'markAsRead'])->name('read');
 });
 
 // ---------------------------
@@ -123,8 +125,7 @@ Route::prefix('admin/setting')
 // SETTING FOR USER
 // ---------------------------
 Route::prefix('user')
-    ->middleware(['auth'])
-    ->name('user.')
+    ->middleware(['auth'])->name('user.')
     ->group(function () {
         // Profil dan Pengaturan
         Route::get('/profile', [UserSettingController::class, 'profile'])->name('profile');

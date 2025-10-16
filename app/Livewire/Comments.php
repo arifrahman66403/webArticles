@@ -2,28 +2,35 @@
 
 namespace App\Livewire;
 
+use Livewire\Component;
 use App\Models\Comment;
 use App\Models\Post;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 
 class Comments extends Component
 {
-    public $post;
-    public $comments;
+    public $postId;
     public $newComment = '';
     public $replyBodies = [];
+    public $comments;
+
+    protected $listeners = ['refreshComments' => 'loadComments'];
 
     public function mount($post)
     {
-        $this->post = $post;
+        $this->postId = is_object($post) ? $post->id : $post;
         $this->loadComments();
+    }
+
+    public function getPostProperty()
+    {
+        return Post::find($this->postId);
     }
 
     public function loadComments()
     {
-        $this->comments = $this->post->comments()
-            ->with(['user', 'replies.user', 'replyToUser'])
+        $this->comments = Comment::with(['user', 'replies.user', 'replyToUser'])
+            ->where('post_id', $this->postId)
             ->whereNull('parent_id')
             ->latest()
             ->get();
@@ -32,20 +39,19 @@ class Comments extends Component
     public function postComment($parentId = null, $replyTo = null)
     {
         $body = $parentId
-            ? ($this->replyBodies[$parentId] ?? '')
-            : $this->newComment;
+            ? trim($this->replyBodies[$parentId] ?? '')
+            : trim($this->newComment);
 
-        if (trim($body) === '') return;
+        if ($body === '') return;
 
         Comment::create([
-            'post_id'   => $this->post->id,
-            'user_id'   => auth()->id(),
-            'body'      => $body,
+            'post_id' => $this->postId,
+            'user_id' => Auth::id(),
+            'body' => $body,
             'parent_id' => $parentId,
-            'reply_to'  => $replyTo,
+            'reply_to' => $replyTo,
         ]);
 
-        // Reset input-nya
         if ($parentId) {
             $this->replyBodies[$parentId] = '';
         } else {
@@ -58,11 +64,11 @@ class Comments extends Component
     public function deleteComment($id)
     {
         $comment = Comment::find($id);
-        if ($comment && $comment->user_id === auth()->id()) {
-            $comment->delete();
-        }
 
-        $this->loadComments();
+        if ($comment && $comment->user_id === Auth::id()) {
+            $comment->delete();
+            $this->loadComments();
+        }
     }
 
     public function render()

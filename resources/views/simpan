@@ -356,3 +356,61 @@ public function adminIndex()
             'categories' => $categories,
         ]);
     }
+
+
+
+
+
+        <!-- Like & Comment Section -->
+        <div class="mt-6 border-t pt-4">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex gap-6 text-gray-600 text-sm">
+              
+              <!-- Like -->
+              @auth
+                <livewire:like-button :post="$post" :wire:key="'like-button-'.$post->id" />
+              @else
+                <p class="text-gray-500">
+                  <a href="/login" class="text-indigo-500 hover:underline">Login</a> to like this post.
+                </p>
+              @endauth
+
+              <!-- Comment Toggle -->
+              <div x-data="{ showComments: false }">
+                <button @click="showComments = !showComments" 
+                    class="flex items-center gap-1 text-gray-500 hover:text-indigo-600 transition">
+                  <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" 
+                      fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 
+                        01-2-2V6a2 2 0 012-2h14a2 2 0 
+                        012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                  </svg>
+                  <span>
+                    {{ $post->comments()->withCount('replies')->get()->sum(fn($c) => 1 + $c->replies_count) }}
+                  </span>
+                </button>
+
+                <!-- Komentar Livewire -->
+                <div x-show="showComments" x-transition class="mt-6">
+                  @auth
+                    <livewire:comments :post="$post" :wire:key="'comments-'.$post->id" />
+                  @else
+                    <p class="text-gray-500">
+                      <a href="/login" class="text-indigo-500 hover:underline">Login</a> to comment.
+                    </p>
+                  @endauth
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daftar Comment (Static Fallback) -->
+        <div class="space-y-4">
+          @forelse($post->comments as $comment)
+            <x-comment :comment="$comment" level="1" />
+          @empty
+            <p class="text-gray-500 text-sm">No comments yet. Be the first to comment!</p>
+          @endforelse
+        </div>

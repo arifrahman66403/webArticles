@@ -18,11 +18,11 @@ class RouteController extends Controller
         return view('home', [
             'title' => 'Home',
             'authors' => User::whereIn('role', ['superadmin', 'admin', 'author'])->get(), // kirim user yang role-nya admin atau author
-            'post_count' => Post::count(),
+            'post_count' => Post::where('status', 'published')->count(),
             'user_count' => User::count(),
             'author_count' => User::whereIn('role', ['superadmin', 'author', 'admin'])->count(),
             'category_count' => Category::count(),
-            'posts' => Post::orderBy('updated_at', 'desc')->take(5)->get(),
+            'posts' => Post::where('status', 'published')->orderBy('updated_at', 'desc')->take(5)->get(),
         ]);
     }
 
@@ -38,7 +38,7 @@ class RouteController extends Controller
 
     public function show(User $user)
     {
-        // hanya superadmin, admmin, dan author yang boleh ditampilkan
+        // hanya superadmin, admin, dan author yang boleh ditampilkan
         if (! in_array($user->role, ['superadmin', 'admin', 'author'])) {
             abort(403, 'mau lihat profile siapa tu?'); // biar gak bisa diintip lewat URL
         }
